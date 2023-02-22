@@ -1,15 +1,34 @@
 import React from 'react';
-import TaskFilter from '../TaskFllter/TaskFilter'
-import './Footer.css'
+import TaskFilter from '../TaskFllter/TaskFilter';
+import PropTypes from 'prop-types';
+import './Footer.css';
 
-const Footer = () => {
-  return (
+const Footer = ({ todoData, clearCompleted, filter, onChangeFilter }) => {
+	const active = todoData.filter((task) => !task.done).length;
+	return (
 		<footer className='footer'>
-			<span className='todo-count'>1 items left</span>
-      <TaskFilter/>
-			<button className='clear-completed'>Clear completed</button>
+			<span className='todo-count'>{active} items left</span>
+			<TaskFilter
+				filter={filter}
+				onChangeFilter={onChangeFilter}
+			/>
+			<button
+				className='clear-completed'
+				onClick={clearCompleted}>
+				Clear completed
+			</button>
 		</footer>
 	);
+};
+
+Footer.defaultProps = {
+	clearCompleted: () => {},
+};
+Footer.propTypes = {
+	clearCompleted: PropTypes.func,
+	todoData: PropTypes.arrayOf(PropTypes.object).isRequired,
+	filter: PropTypes.string,
+	onChangeFilter: PropTypes.func,
 };
 
 export default Footer;

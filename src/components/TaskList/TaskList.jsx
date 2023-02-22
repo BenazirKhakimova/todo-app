@@ -1,22 +1,28 @@
 import React, { Component } from 'react';
 import Task from '../Task/Task';
+import PropTypes from 'prop-types';
 import './TaskList.css';
 
 export default class TaskList extends Component {
-
+	static defaultProps = {
+		todoData: [],
+	};
+	static propTypes = {
+		todoData: PropTypes.arrayOf(PropTypes.object),
+		deleteItem: PropTypes.func,
+		handleCompleted: PropTypes.func,
+	};
 	render() {
-		const { todoData, deleteItem, handleCompleted} = this.props;
-		
-		
+		const { todoData, deleteItem, handleCompleted } = this.props;
 		const element = todoData.map((todo) => {
-			const { id, ...label } = todo;
+			const { id, time, ...label } = todo;
 			return (
-				<div
-					key={id}>
+				<div key={id}>
 					<Task
 						{...label}
 						deleteItem={() => deleteItem(id)}
 						handleCompleted={() => handleCompleted(id)}
+						time={time}
 					/>
 				</div>
 			);
