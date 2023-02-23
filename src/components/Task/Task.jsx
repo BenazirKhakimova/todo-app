@@ -20,8 +20,7 @@ export default class Task extends Component {
     }
 
     render() {
-        const { label, deleteItem, handleCompleted, done, time, id } =
-            this.props
+        const { label, deleteItem, handleCompleted, done, time, id } = this.props
         let classNames = null
 
         if (done) {

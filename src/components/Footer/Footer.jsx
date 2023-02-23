@@ -16,7 +16,7 @@ const Footer = ({ todoData, clearCompleted, filter, onChangeFilter }) => {
                 className="clear-completed"
                 onClick={clearCompleted}
             >
-                Clear completed
+        Clear completed
             </button>
         </footer>
     )

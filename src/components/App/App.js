@@ -80,14 +80,14 @@ export default class App extends Component {
 
     filterTasks = (tasks, filter) => {
         switch (filter) {
-            case 'all':
-                return tasks
-            case 'active':
-                return tasks.filter((task) => !task.done)
-            case 'completed':
-                return tasks.filter((task) => task.done)
-            default:
-                return tasks
+        case 'all':
+            return tasks
+        case 'active':
+            return tasks.filter((task) => !task.done)
+        case 'completed':
+            return tasks.filter((task) => task.done)
+        default:
+            return tasks
         }
     }
 
