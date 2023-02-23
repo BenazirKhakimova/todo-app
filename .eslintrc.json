@@ -20,7 +20,7 @@
   },
   "plugins": ["react", "prettier", "import","jsx-a11y", "react-hooks"],
   "rules": {
-    "indent": ["error", 4],
+    "indent": [2, 2, { "SwitchCase": 1}],
     "prettier/prettier": "off",
     "linebreak-style": [0, "unix"],
     "quotes": ["error", "single"],
