@@ -39,9 +39,11 @@
     "react/function-component-definition": 0,
     "react/prop-types": 0,
     "no-unused-vars": "off",
+    "react/no-unused-state": "warn",
     "react/static-property-placement": "off",
     "import/no-unresolved": [2, { "caseSensitive": false }],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "eqeqeq":"off",
     "import/order": [
       2,
       {
