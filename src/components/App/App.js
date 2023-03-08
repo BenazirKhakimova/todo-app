@@ -19,12 +19,15 @@ export default class App extends Component {
     return arr.findIndex((todo) => todo.id === id)
   }
 
-  createItem(label) {
+  createItem(label, minutes, seconds) {
     return {
       id: this.maxId.id++,
       label,
       done: false,
       time: Date.now(),
+      minutes: minutes || 0,
+      seconds: seconds || 0,
+      isPaused: false,
     }
   }
 
@@ -54,10 +57,10 @@ export default class App extends Component {
     })
   }
 
-  addTask = (label) => {
-    const newTask = this.createItem(label)
+  addTask = (label, minutes, seconds) => {
+    const newTask = this.createItem(label, minutes, seconds)
     this.setState(({ todoData }) => {
-      const newArray = [...todoData, newTask]
+      const newArray = [newTask, ...todoData]
       return {
         todoData: newArray,
       }
@@ -91,6 +94,42 @@ export default class App extends Component {
     }
   }
 
+  tick = () => {
+    this.intervalId = setTimeout(() => {
+      const { todoData } = this.state
+      const oldArray = JSON.parse(JSON.stringify(todoData))
+
+      const newArray = oldArray.map((todo) => {
+        const { isPaused, done, minutes, seconds } = todo
+        if (!isPaused && !done) {
+          if (minutes === 0 && seconds === 0) {
+            clearTimeout(this.intervalId)
+            return todo
+          }
+          if (seconds > 0) {
+            return { ...todo, minutes, seconds: seconds - 1 }
+          }
+          return { ...todo, minutes: minutes - 1, seconds: 59 }
+        }
+        return todo
+      })
+      this.tick()
+      this.setState({ todoData: newArray })
+    }, 1000)
+  }
+
+  togglePause = (id) => {
+    this.setState((prevState) => ({
+      todoData: prevState.todoData.map((todo) => {
+        const { isPaused } = todo
+        if (todo.id === id) {
+          return { ...todo, isPaused: !isPaused }
+        }
+        return todo
+      }),
+    }))
+  }
+
   render() {
     const { todoData, filter } = this.state
     const upGradeList = this.filterTasks(todoData, filter)
@@ -105,6 +144,9 @@ export default class App extends Component {
             deleteItem={this.deleteItem}
             handleCompleted={this.handleCompleted}
             todoData={upGradeList}
+            tick={this.tick}
+            togglePause={this.togglePause}
+            intervalId={this.intervalId}
           />
           <Footer
             todoData={todoData}

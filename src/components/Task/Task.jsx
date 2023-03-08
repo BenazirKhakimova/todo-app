@@ -2,6 +2,7 @@ import { formatDistanceToNow } from 'date-fns'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import './Task.css'
+import classNames from 'classnames'
 
 export default class Task extends Component {
   static defaultProps = {
@@ -19,15 +20,41 @@ export default class Task extends Component {
     time: PropTypes.number,
   }
 
-  render() {
-    const { label, deleteItem, handleCompleted, done, time, id } = this.props
-    let classNames = null
+  componentDidMount() {
+    this.props.tick()
+  }
 
-    if (done) {
-      classNames = 'completed'
+  componentWillUnmount() {
+    clearTimeout(this.props.intervalId)
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (
+      prevProps.minutes !== this.props.minutes ||
+      prevProps.seconds !== this.props.seconds
+    ) {
+      clearTimeout(this.props.intervalId)
+      this.props.tick()
     }
+  }
+
+  render() {
+    const {
+      id,
+      label,
+      deleteItem,
+      handleCompleted,
+      done,
+      time,
+      togglePause,
+      minutes,
+      seconds,
+      isPaused,
+    } = this.props
+    const completed = classNames({ completed: done })
+
     return (
-      <li className={classNames}>
+      <li className={`${completed}`}>
         <div className="view">
           <input
             className="toggle"
@@ -36,10 +63,19 @@ export default class Task extends Component {
             onChange={handleCompleted}
           />
           <label>
-            <span className="description">{label}</span>
-            <span className="created">
+            <span className="title">{label}</span>
+            <span className="description">
+              <button
+                type="button"
+                className={`icon ${isPaused ? 'icon-play' : 'icon-pause'}`}
+                onClick={() => togglePause(id)}
+              />
+              {minutes < 10 ? `0${minutes}` : minutes} :{' '}
+              {seconds < 10 ? `0${seconds}` : seconds}
+            </span>
+            <span className="description">
               {`
-							created ${formatDistanceToNow(time, { includeSeconds: true })} ago`}
+      				created ${formatDistanceToNow(time, { includeSeconds: true })} ago`}
             </span>
           </label>
           <button type="button" className="icon icon-edit" />
@@ -49,6 +85,7 @@ export default class Task extends Component {
             className="icon icon-destroy"
           />
         </div>
+        <input type="text" className="edit" />
       </li>
     )
   }
