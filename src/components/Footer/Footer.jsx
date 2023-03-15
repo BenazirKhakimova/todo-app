@@ -24,6 +24,8 @@ const Footer = ({ todoData, clearCompleted, filter, onChangeFilter }) => {
 
 Footer.defaultProps = {
   clearCompleted: () => {},
+  onChangeFilter: () => {},
+  filter: 'all',
 }
 Footer.propTypes = {
   clearCompleted: PropTypes.func,

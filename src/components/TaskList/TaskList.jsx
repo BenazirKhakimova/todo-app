@@ -1,30 +1,18 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 
 import Task from '../Task/Task'
 import './TaskList.css'
 
-const TaskList = ({
-  todoData,
-  deleteItem,
-  handleCompleted,
-  tick,
-  togglePause,
-  intervalId,
-}) => {
+const TaskList = ({ todoData, deleteItem, handleCompleted, togglePause }) => {
   const element = todoData.map((todo) => {
-    const { id, time, ...label } = todo
     return (
-      <div key={id}>
+      <div key={todo.id}>
         <Task
-          {...label}
-          id={id}
-          deleteItem={() => deleteItem(id)}
-          handleCompleted={() => handleCompleted(id)}
-          time={time}
-          tick={tick}
+          todo={todo}
+          deleteItem={deleteItem}
+          handleCompleted={handleCompleted}
           togglePause={togglePause}
-          intervalId={intervalId}
         />
       </div>
     )
@@ -33,10 +21,14 @@ const TaskList = ({
 }
 TaskList.defaultProps = {
   todoData: [],
+  deleteItem: () => {},
+  handleCompleted: () => {},
+  togglePause: () => {},
 }
 TaskList.propTypes = {
   todoData: PropTypes.arrayOf(PropTypes.object),
   deleteItem: PropTypes.func,
   handleCompleted: PropTypes.func,
+  togglePause: PropTypes.func,
 }
 export default TaskList

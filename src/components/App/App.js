@@ -1,27 +1,18 @@
-import React, { Component } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import Footer from '../Footer/Footer'
 import NewTaskForm from '../NewTaskForm/NewTaskForm'
 import TaskList from '../TaskList/TaskList'
 import './App.css'
 
-export default class App extends Component {
-  maxId = {
-    id: 1,
-  }
+const App = () => {
+  const [movieId, setMovieId] = useState(1)
+  const [todoData, setTodoData] = useState([])
+  const [filter, setFilter] = useState('all')
 
-  state = {
-    todoData: [],
-    filter: 'all',
-  }
-
-  findIndex = (arr, id) => {
-    return arr.findIndex((todo) => todo.id === id)
-  }
-
-  createItem(label, minutes, seconds) {
+  const createItem = (label, minutes, seconds) => {
     return {
-      id: this.maxId.id++,
+      id: movieId,
       label,
       done: false,
       time: Date.now(),
@@ -31,58 +22,34 @@ export default class App extends Component {
     }
   }
 
-  deleteItem = (id) => {
-    this.setState(({ todoData }) => {
-      const index = this.findIndex(todoData, id)
-      const newArray = JSON.parse(JSON.stringify(todoData))
-      newArray.splice(index, 1)
-      return {
-        todoData: newArray,
-      }
-    })
+  const addTask = (label, minutes, seconds) => {
+    setMovieId((id) => id + 1)
+    const newTask = createItem(label, minutes, seconds)
+    setTodoData([...todoData, newTask])
   }
 
-  handleCompleted = (id) => {
-    this.setState(({ todoData }) => {
-      const index = this.findIndex(todoData, id)
-      const oldItem = todoData[index]
-      const newItem = { ...oldItem, done: !oldItem.done }
-
-      const newArray = JSON.parse(JSON.stringify(todoData))
-      newArray.splice(index, 1, newItem)
-
-      return {
-        todoData: newArray,
-      }
-    })
+  const deleteItem = (id) => {
+    const deleted = todoData.filter((todo) => todo.id !== id)
+    setTodoData(deleted)
   }
 
-  addTask = (label, minutes, seconds) => {
-    const newTask = this.createItem(label, minutes, seconds)
-    this.setState(({ todoData }) => {
-      const newArray = [newTask, ...todoData]
-      return {
-        todoData: newArray,
-      }
-    })
+  const handleCompleted = (id) => {
+    const done = todoData.map((todo) =>
+      todo.id === id ? { ...todo, done: !todo.done } : todo
+    )
+    setTodoData(done)
+  }
+  const clearCompleted = () => {
+    const deleteDone = todoData.filter((task) => !task.done)
+    setTodoData(deleteDone)
   }
 
-  clearCompleted = () => {
-    this.setState(({ todoData }) => {
-      let newArray = JSON.parse(JSON.stringify(todoData))
-      newArray = newArray.filter((task) => !task.done)
-      return {
-        todoData: newArray,
-      }
-    })
+  const onChangeFilter = (f) => {
+    setFilter(f)
   }
 
-  onChangeFilter = (filter) => {
-    this.setState({ filter })
-  }
-
-  filterTasks = (tasks, filter) => {
-    switch (filter) {
+  const filterTasks = (tasks, f) => {
+    switch (f) {
       case 'all':
         return tasks
       case 'active':
@@ -94,16 +61,14 @@ export default class App extends Component {
     }
   }
 
-  tick = () => {
-    this.intervalId = setTimeout(() => {
-      const { todoData } = this.state
-      const oldArray = JSON.parse(JSON.stringify(todoData))
-
-      const newArray = oldArray.map((todo) => {
+  const intervalId = useRef(null)
+  const tick = useCallback(() => {
+    intervalId.current = setTimeout(() => {
+      const newArray = todoData.map((todo) => {
         const { isPaused, done, minutes, seconds } = todo
         if (!isPaused && !done) {
           if (minutes === 0 && seconds === 0) {
-            clearTimeout(this.intervalId)
+            clearTimeout(intervalId.current)
             return todo
           }
           if (seconds > 0) {
@@ -113,49 +78,50 @@ export default class App extends Component {
         }
         return todo
       })
-      this.tick()
-      this.setState({ todoData: newArray })
+      tick()
+      setTodoData(newArray)
     }, 1000)
-  }
+  }, [todoData])
 
-  togglePause = (id) => {
-    this.setState((prevState) => ({
-      todoData: prevState.todoData.map((todo) => {
+  useEffect(() => {
+    tick()
+    return () => clearTimeout(intervalId.current)
+  }, [tick])
+
+  const togglePause = (id) => {
+    setTodoData(
+      todoData.map((todo) => {
         const { isPaused } = todo
         if (todo.id === id) {
           return { ...todo, isPaused: !isPaused }
         }
         return todo
-      }),
-    }))
-  }
-
-  render() {
-    const { todoData, filter } = this.state
-    const upGradeList = this.filterTasks(todoData, filter)
-
-    return (
-      <section className="todoapp">
-        <header className="header">
-          <NewTaskForm addTask={this.addTask} />
-        </header>
-        <section className="main">
-          <TaskList
-            deleteItem={this.deleteItem}
-            handleCompleted={this.handleCompleted}
-            todoData={upGradeList}
-            tick={this.tick}
-            togglePause={this.togglePause}
-            intervalId={this.intervalId}
-          />
-          <Footer
-            todoData={todoData}
-            clearCompleted={this.clearCompleted}
-            filter={filter}
-            onChangeFilter={this.onChangeFilter}
-          />
-        </section>
-      </section>
+      })
     )
   }
+
+  const upGradeList = filterTasks(todoData, filter)
+
+  return (
+    <section className="todoapp">
+      <header className="header">
+        <NewTaskForm addTask={addTask} />
+      </header>
+      <section className="main">
+        <TaskList
+          deleteItem={deleteItem}
+          handleCompleted={handleCompleted}
+          todoData={upGradeList}
+          togglePause={togglePause}
+        />
+        <Footer
+          todoData={todoData}
+          clearCompleted={clearCompleted}
+          filter={filter}
+          onChangeFilter={onChangeFilter}
+        />
+      </section>
+    </section>
+  )
 }
+export default App
