@@ -10,8 +10,9 @@ const Task = ({ todo, deleteItem, handleCompleted, togglePause, editTodo }) => {
   const [newLabel, setNewLabel] = useState('')
   const completed = classNames({ completed: done })
 
-  const handleEditChange = (editedId) => {
+  const handleEditChange = (editedId, currentLabel) => {
     setEditTodoId(editedId)
+    setNewLabel(currentLabel)
   }
   const onLabelChange = (e) => {
     setNewLabel(e.target.value)
@@ -40,7 +41,7 @@ const Task = ({ todo, deleteItem, handleCompleted, togglePause, editTodo }) => {
                 className="edit"
                 type="text"
                 onChange={(e) => onLabelChange(e)}
-                value={editTodoId === id ? newLabel : label}
+                value={editTodoId ? newLabel : label}
                 ref={(input) => input && input.focus()}
               />
             </form>
@@ -70,7 +71,7 @@ const Task = ({ todo, deleteItem, handleCompleted, togglePause, editTodo }) => {
             <button
               type="button"
               className="icon icon-edit"
-              onClick={() => handleEditChange(id)}
+              onClick={() => handleEditChange(id, label)}
             />
             <button
               type="button"
