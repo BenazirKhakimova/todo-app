@@ -59,7 +59,7 @@
 }
 .todo-list li label .title {
   width: 70%;
-  word-break: break-all;
+  word-break: break-word;
   display: block;
   line-height: 1.2;
   transition: color 0.4s;
