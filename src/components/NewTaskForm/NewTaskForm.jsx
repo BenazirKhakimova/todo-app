@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
+import React, { useState } from 'react'
 import './NewTaskForm.css'
 
 const NewTaskForm = ({ addTask }) => {
@@ -32,35 +32,32 @@ const NewTaskForm = ({ addTask }) => {
   }
 
   return (
-    <>
-      <h1>todos</h1>
-      <form onSubmit={onSubmit} className="new-todo-form">
-        <input
-          className="new-todo"
-          placeholder="Task"
-          value={label}
-          onChange={onTaskAdd}
-        />
-        <input
-          className="new-todo-form__timer"
-          placeholder="Min"
-          value={minutes}
-          onChange={onMinutesAdd}
-          type="number"
-          min={0}
-        />
-        <input
-          className="new-todo-form__timer"
-          placeholder="Sec"
-          value={seconds}
-          onChange={onSecondsAdd}
-          type="number"
-          max={59}
-          min={0}
-        />
-        <button type="submit" />
-      </form>
-    </>
+    <form onSubmit={onSubmit} className="new-todo-form">
+      <input
+        className="new-todo"
+        placeholder="Task"
+        value={label}
+        onChange={onTaskAdd}
+      />
+      <input
+        className="new-todo-form__timer"
+        placeholder="Min"
+        value={minutes}
+        onChange={onMinutesAdd}
+        type="number"
+        min={0}
+      />
+      <input
+        className="new-todo-form__timer"
+        placeholder="Sec"
+        value={seconds}
+        onChange={onSecondsAdd}
+        type="number"
+        max={59}
+        min={0}
+      />
+      <button type="submit" />
+    </form>
   )
 }
 

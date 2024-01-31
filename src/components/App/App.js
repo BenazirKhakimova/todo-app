@@ -6,13 +6,13 @@ import TaskList from '../TaskList/TaskList'
 import './App.css'
 
 const App = () => {
-  const [movieId, setMovieId] = useState(1)
   const [todoData, setTodoData] = useState([])
+  const [todoId, setTodoId] = useState(1)
   const [filter, setFilter] = useState('all')
 
   const createItem = (label, minutes, seconds) => {
     return {
-      id: movieId,
+      id: todoId,
       label,
       done: false,
       time: Date.now(),
@@ -23,7 +23,7 @@ const App = () => {
   }
 
   const addTask = (label, minutes, seconds) => {
-    setMovieId((id) => id + 1)
+    setTodoId((id) => id + 1)
     const newTask = createItem(label, minutes, seconds)
     setTodoData([...todoData, newTask])
   }
@@ -31,6 +31,16 @@ const App = () => {
   const deleteItem = (id) => {
     const deleted = todoData.filter((todo) => todo.id !== id)
     setTodoData(deleted)
+  }
+
+  const editTodo = (id, newLable) => {
+    const editedTodo = todoData.map((todo) => {
+      if (todo.id === id) {
+        return { ...todo, label: newLable }
+      }
+      return todo
+    })
+    setTodoData(editedTodo)
   }
 
   const handleCompleted = (id) => {
@@ -105,6 +115,7 @@ const App = () => {
   return (
     <section className="todoapp">
       <header className="header">
+        <h1>todos</h1>
         <NewTaskForm addTask={addTask} />
       </header>
       <section className="main">
@@ -113,6 +124,7 @@ const App = () => {
           handleCompleted={handleCompleted}
           todoData={upGradeList}
           togglePause={togglePause}
+          editTodo={editTodo}
         />
         <Footer
           todoData={todoData}

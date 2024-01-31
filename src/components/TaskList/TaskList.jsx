@@ -4,7 +4,13 @@ import PropTypes from 'prop-types'
 import Task from '../Task/Task'
 import './TaskList.css'
 
-const TaskList = ({ todoData, deleteItem, handleCompleted, togglePause }) => {
+const TaskList = ({
+  todoData,
+  deleteItem,
+  handleCompleted,
+  togglePause,
+  editTodo,
+}) => {
   const element = todoData.map((todo) => {
     return (
       <div key={todo.id}>
@@ -13,6 +19,7 @@ const TaskList = ({ todoData, deleteItem, handleCompleted, togglePause }) => {
           deleteItem={deleteItem}
           handleCompleted={handleCompleted}
           togglePause={togglePause}
+          editTodo={editTodo}
         />
       </div>
     )
